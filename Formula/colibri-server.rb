@@ -5,8 +5,8 @@
 class ColibriServer < Formula
   desc "Trustless stateless-client for Ethereum and L1/L2 networks"
   homepage "https://corpuscore.tech/"
-  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v0.6.6.tar.gz"
-  sha256 "578c5d32f6fa39c7a0a38530c27d5c39af57d9358f9ea29e9d2bede9202cefcd"  # Generate with: shasum -a 256 <tarball>
+  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v0.6.8.tar.gz"
+  sha256 "4c0691326a938c86c09bc7bba92d470092f6db34ee3cefafe817d1c19729bfea"  # Generate with: shasum -a 256 <tarball>
   license "MIT"
   
   head "https://github.com/corpus-core/colibri-stateless.git", branch: "main"
@@ -55,6 +55,11 @@ class ColibriServer < Formula
     url "https://github.com/chfast/ethash/archive/refs/tags/v1.1.0.tar.gz"
     sha256 "73b327f3c23f407389845d936c1138af6328c5841a331c1abe3a2add53c558aa"
   end
+
+  resource "evmc" do
+    url "https://github.com/ethereum/evmc/archive/refs/tags/v12.1.0.tar.gz"
+    sha256 "0d5458015bf38a5358fad04cc290d21ec40122d1eb6420e0b33ae25546984bcd"
+  end
   
   def install
     # Extract all resources into their respective directories
@@ -66,6 +71,7 @@ class ColibriServer < Formula
     resource("evmone").stage { (buildpath/"libs/evmone/evmone").install Dir["*"] }
     resource("intx").stage { (buildpath/"libs/intx/intx").install Dir["*"] }
     resource("ethash").stage { (buildpath/"libs/evmone/ethash").install Dir["*"] }
+    resource("evmc").stage { (buildpath/"libs/evmone/evmone/evmc").install Dir["*"] }
     # Build directory
     mkdir "build" do
       # Tell CMake where to find the pre-extracted dependencies (bypasses FetchContent)
@@ -86,6 +92,7 @@ class ColibriServer < Formula
              "-DFETCHCONTENT_SOURCE_DIR_EVMONE_EXTERNAL=#{buildpath}/libs/evmone/evmone",
              "-DFETCHCONTENT_SOURCE_DIR_INTX=#{buildpath}/libs/intx/intx",
              "-DFETCHCONTENT_SOURCE_DIR_ETHHASH_EXTERNAL=#{buildpath}/libs/evmone/ethash",
+             "-DFETCHCONTENT_SOURCE_DIR_EVMC=#{buildpath}/libs/evmone/evmone/evmc",
              *std_cmake_args
       system "make", "-j#{ENV.make_jobs}", "colibri-server", "colibri-prover", "colibri-verifier", "colibri-ssz"
       
