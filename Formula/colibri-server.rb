@@ -5,8 +5,8 @@
 class ColibriServer < Formula
   desc "Trustless stateless-client for Ethereum and L1/L2 networks"
   homepage "https://corpuscore.tech/"
-  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v0.6.9.tar.gz"
-  sha256 "16fd3c3f65879e8370f36799cc7936d646272619f87522720d59ec5edafc13b5"  # Generate with: shasum -a 256 <tarball>
+  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v0.6.11.tar.gz"
+  sha256 "d86573dde12be35aa22b2b6170dae0f8e2f562b2198261807365cebbc7f4fe6a"  # Generate with: shasum -a 256 <tarball>
   license "MIT"
   
   head "https://github.com/corpus-core/colibri-stateless.git", branch: "main"
@@ -104,8 +104,8 @@ class ColibriServer < Formula
       bin.install "bin/colibri-ssz"
     end
     
-    # Install config file
-    etc.install "installer/config/server.conf.default" => "colibri/server.conf"
+    # Install config file (path relative to buildpath, not build dir)
+    (etc/"colibri").install buildpath/"installer/config/server.conf.default" => "server.conf"
     
     # Documentation
     doc.install "README.md"
