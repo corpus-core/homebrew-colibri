@@ -5,8 +5,8 @@
 class ColibriServer < Formula
   desc "Trustless stateless-client for Ethereum and L1/L2 networks"
   homepage "https://corpuscore.tech/"
-  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v0.6.5.tar.gz"
-  sha256 "3b32a180ca04527ca53c25bf1d43187d411ab6e1ea23126c13c3e0b156efd6a2"  # Generate with: shasum -a 256 <tarball>
+  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v0.6.6.tar.gz"
+  sha256 "578c5d32f6fa39c7a0a38530c27d5c39af57d9358f9ea29e9d2bede9202cefcd"  # Generate with: shasum -a 256 <tarball>
   license "MIT"
   
   head "https://github.com/corpus-core/colibri-stateless.git", branch: "main"
@@ -68,6 +68,7 @@ class ColibriServer < Formula
     resource("ethash").stage { (buildpath/"libs/evmone/ethash").install Dir["*"] }
     # Build directory
     mkdir "build" do
+      # Tell CMake where to find the pre-extracted dependencies (bypasses FetchContent)
       system "cmake", "..",
              "-DCMAKE_BUILD_TYPE=Release",
              "-DHTTP_SERVER=ON",
@@ -76,6 +77,15 @@ class ColibriServer < Formula
              "-DVERIFIER=ON",
              "-DCLI=ON",
              "-DTEST=OFF",
+             "-DFETCHCONTENT_FULLY_DISCONNECTED=ON",
+             "-DFETCHCONTENT_SOURCE_DIR_BLST=#{buildpath}/libs/blst/blst",
+             "-DFETCHCONTENT_SOURCE_DIR_LIBUV=#{buildpath}/libs/libuv/libuv",
+             "-DFETCHCONTENT_SOURCE_DIR_LLHTTP=#{buildpath}/libs/llhttp/llhttp",
+             "-DFETCHCONTENT_SOURCE_DIR_ZSTD=#{buildpath}/libs/zstd/zstd",
+             "-DFETCHCONTENT_SOURCE_DIR_LIBTOMMATH=#{buildpath}/libs/tommath/tommath",
+             "-DFETCHCONTENT_SOURCE_DIR_EVMONE_EXTERNAL=#{buildpath}/libs/evmone/evmone",
+             "-DFETCHCONTENT_SOURCE_DIR_INTX=#{buildpath}/libs/intx/intx",
+             "-DFETCHCONTENT_SOURCE_DIR_ETHHASH_EXTERNAL=#{buildpath}/libs/evmone/ethash",
              *std_cmake_args
       system "make", "-j#{ENV.make_jobs}", "colibri-server", "colibri-prover", "colibri-verifier", "colibri-ssz"
       
