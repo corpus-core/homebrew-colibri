@@ -5,8 +5,8 @@
 class ColibriServer < Formula
   desc "Trustless stateless-client for Ethereum and L1/L2 networks"
   homepage "https://corpuscore.tech/"
-  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v0.6.4.tar.gz"
-  sha256 "3dea4f5edca7f23cf8de17fcb810bc38403a3522a203d5e34b62a680f0c61a13"  # Generate with: shasum -a 256 <tarball>
+  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v0.6.5.tar.gz"
+  sha256 "3b32a180ca04527ca53c25bf1d43187d411ab6e1ea23126c13c3e0b156efd6a2"  # Generate with: shasum -a 256 <tarball>
   license "MIT"
   
   head "https://github.com/corpus-core/colibri-stateless.git", branch: "main"
@@ -15,13 +15,64 @@ class ColibriServer < Formula
   depends_on "rust" => :build
   depends_on "curl"
   
+  # External dependencies (normally fetched via FetchContent, but Homebrew doesn't allow that)
+  resource "blst" do
+    url "https://github.com/supranational/blst/archive/refs/tags/v0.3.13.tar.gz"
+    sha256 "89772cef338e93bc0348ae531462752906e8fa34738e38035308a7931dd2948f"
+  end
+  
+  resource "libuv" do
+    url "https://github.com/libuv/libuv/archive/refs/tags/v1.50.0.tar.gz"
+    sha256 "b1ec56444ee3f1e10c8bd3eed16ba47016ed0b94fe42137435aaf2e0bd574579"
+  end
+  
+  resource "llhttp" do
+    url "https://github.com/nodejs/llhttp/archive/refs/tags/release/v9.2.1.tar.gz"
+    sha256 "3c163891446e529604b590f9ad097b2e98b5ef7e4d3ddcf1cf98b62ca668f23e"
+  end
+  
+  resource "zstd" do
+    url "https://github.com/facebook/zstd/archive/refs/tags/v1.5.6.tar.gz"
+    sha256 "30f35f71c1203369dc979ecde0400ffea93c27391bfd2ac5a9715d2173d92ff7"
+  end
+  
+  resource "tommath" do
+    url "https://github.com/libtom/libtommath/archive/refs/tags/v1.3.0.tar.gz"
+    sha256 "6d099e93ff00fa9b18346f4bcd97dcc48c3e91286f7e16c4ac5515a7171c3149"
+  end
+  
+  resource "evmone" do
+    url "https://github.com/ethereum/evmone/archive/refs/tags/v0.15.0.tar.gz"
+    sha256 "6eb2122c98bd86a083015b4e41f46b16df4d9bff608d2bf2f2d985ec18e6d640"
+  end
+  
+  resource "intx" do
+    url "https://github.com/chfast/intx/archive/refs/tags/v0.10.0.tar.gz"
+    sha256 "80513a8ca8b039fa8d40ce88a1910baefc5273259282cf664a10f0707f41cd75"
+  end
+  
+  resource "ethash" do
+    url "https://github.com/chfast/ethash/archive/refs/tags/v1.1.0.tar.gz"
+    sha256 "73b327f3c23f407389845d936c1138af6328c5841a331c1abe3a2add53c558aa"
+  end
+  
   def install
+    # Extract all resources into their respective directories
+    resource("blst").stage { (buildpath/"libs/blst/blst").install Dir["*"] }
+    resource("libuv").stage { (buildpath/"libs/libuv/libuv").install Dir["*"] }
+    resource("llhttp").stage { (buildpath/"libs/llhttp/llhttp").install Dir["*"] }
+    resource("zstd").stage { (buildpath/"libs/zstd/zstd").install Dir["*"] }
+    resource("tommath").stage { (buildpath/"libs/tommath/tommath").install Dir["*"] }
+    resource("evmone").stage { (buildpath/"libs/evmone/evmone").install Dir["*"] }
+    resource("intx").stage { (buildpath/"libs/intx/intx").install Dir["*"] }
+    resource("ethash").stage { (buildpath/"libs/evmone/ethash").install Dir["*"] }
     # Build directory
     mkdir "build" do
       system "cmake", "..",
              "-DCMAKE_BUILD_TYPE=Release",
              "-DHTTP_SERVER=ON",
              "-DPROVER=ON",
+             "-DPROVER_CACHE=ON",
              "-DVERIFIER=ON",
              "-DCLI=ON",
              "-DTEST=OFF",
