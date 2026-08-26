@@ -5,8 +5,8 @@
 class ColibriServer < Formula
   desc "Trustless stateless-client for Ethereum and L1/L2 networks"
   homepage "https://corpuscore.tech/"
-  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v2.0.5.tar.gz"
-  sha256 "fc7bf5d0dcb20cba337f7bbf2838ea5a3011e667e411d7a742c4aac41420e543"  # Generate with: shasum -a 256 <tarball>
+  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v2.0.6.tar.gz"
+  sha256 "0c6e7a54bbdf4c209908493bc28664a8a030b108ccf7eca35450ce3bcfb4bdbd"  # Generate with: shasum -a 256 <tarball>
   license "MIT"
   
   head "https://github.com/corpus-core/colibri-stateless.git", branch: "main"
