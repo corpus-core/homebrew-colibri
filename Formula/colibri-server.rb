@@ -5,8 +5,8 @@
 class ColibriServer < Formula
   desc "Trustless stateless-client for Ethereum and L1/L2 networks"
   homepage "https://corpuscore.tech/"
-  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v2.0.6.tar.gz"
-  sha256 "0c6e7a54bbdf4c209908493bc28664a8a030b108ccf7eca35450ce3bcfb4bdbd"  # Generate with: shasum -a 256 <tarball>
+  url "https://github.com/corpus-core/colibri-stateless/archive/refs/tags/v3.0.0.tar.gz"
+  sha256 "36737a6338342b1988a06611754fca26a5611dd3ff75aa32016c897ff3b3f79b"  # Generate with: shasum -a 256 <tarball>
   license "MIT"
   
   head "https://github.com/corpus-core/colibri-stateless.git", branch: "main"
@@ -31,6 +31,7 @@ class ColibriServer < Formula
     sha256 "3c163891446e529604b590f9ad097b2e98b5ef7e4d3ddcf1cf98b62ca668f23e"
   end
   
+  # Required for CHAIN_OP (OP-Stack preconf ZSTD decompression).
   resource "zstd" do
     url "https://github.com/facebook/zstd/archive/refs/tags/v1.5.6.tar.gz"
     sha256 "30f35f71c1203369dc979ecde0400ffea93c27391bfd2ac5a9715d2173d92ff7"
@@ -74,6 +75,7 @@ class ColibriServer < Formula
       system "cmake", "..",
              "-DCMAKE_BUILD_TYPE=Release",
              "-DHTTP_SERVER=ON",
+             "-DCHAIN_OP=ON",
              "-DPROVER=ON",
              "-DPROVER_CACHE=ON",
              "-DVERIFIER=ON",
